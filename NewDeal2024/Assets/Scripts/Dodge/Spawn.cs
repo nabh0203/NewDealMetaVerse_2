@@ -25,7 +25,7 @@ public class Spawn : MonoBehaviour
     void Update()
     {
         //Bulletspawn();
-
+        transform.LookAt(_targetPlayer);
         _spawnDelay += Time.deltaTime;
         
         if (_spawnDelay >= _spawnRate)

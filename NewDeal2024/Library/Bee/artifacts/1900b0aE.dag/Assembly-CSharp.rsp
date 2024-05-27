@@ -118,8 +118,12 @@
 -define:ENABLE_TIMELINE
 -define:ENABLE_LEGACY_INPUT_MANAGER
 -define:TEXTCORE_FONT_ENGINE_1_5_OR_NEWER
+-define:DOTWEEN
 -define:CSHARP_7_OR_LATER
 -define:CSHARP_7_3_OR_NEWER
+-r:"Assets/Plugins/Demigiant/DemiLib/Core/DemiLib.dll"
+-r:"Assets/Plugins/Demigiant/DOTween/DOTween.dll"
+-r:"Assets/Plugins/Demigiant/DOTweenPro/DOTweenPro.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/2022.3.25f1/Editor/Data/Managed/UnityEngine/UnityEditor.CoreModule.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/2022.3.25f1/Editor/Data/Managed/UnityEngine/UnityEditor.DeviceSimulatorModule.dll"
 -r:"C:/Program Files/Unity/Hub/Editor/2022.3.25f1/Editor/Data/Managed/UnityEngine/UnityEditor.DiagnosticsModule.dll"
@@ -330,6 +334,13 @@
 -r:"C:/Program Files/Unity/Hub/Editor/2022.3.25f1/Editor/Data/PlaybackEngines/AndroidPlayer/Unity.Android.Types.dll"
 -r:"Library/PackageCache/com.unity.testtools.codecoverage@1.2.5/lib/ReportGenerator/ReportGeneratorMerged.dll"
 -r:"Library/PackageCache/com.unity.visualscripting@1.9.2/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-firstpass.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Febucci.Attributes.Editor.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Febucci.Attributes.Runtime.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Febucci.TextAnimator.Demo.Runtime.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Febucci.TextAnimator.Editor.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Febucci.TextAnimator.Runtime.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Febucci.TextAnimator.TMP.Runtime.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.EditorCoroutines.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Performance.Profile-Analyzer.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.PlasticSCM.Editor.ref.dll"
@@ -360,6 +371,8 @@
 "Assets/Scripts/Dodge/PlayerController.cs"
 "Assets/Scripts/Dodge/Rotator.cs"
 "Assets/Scripts/Dodge/Spawn.cs"
+"Assets/Scripts/Dodge/TitleManager.cs"
+"Assets/Scripts/Space/Move.cs"
 -langversion:9.0
 /deterministic
 /optimize+

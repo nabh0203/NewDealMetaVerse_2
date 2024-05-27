@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
         {
             if(Input .GetKeyUp(KeyCode.R)) 
             {
-                SceneManager.LoadScene("Dodge");
+                SceneManager.LoadScene("TitleScene");
             }
         }
     }
