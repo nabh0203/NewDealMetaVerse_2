@@ -43,9 +43,14 @@ public class UniRunPlatform : MonoBehaviour
         //플레이어 캐릭터가 자신을 밟았을 때 죽는 로직
 
         //Player 태그를 가지고 있고 !isStepped 라면 코드를 실행 
+
+        //if (other.collider.tag == "Player" && isNotStepped == true)
+        //if (other.collider.tag == "Player" && !isStepped)
+        //if (other.collider.tag == "Player" && isStepped == false)
         if (other.collider.tag == "Player" && isNotStepped)
         {
             isNotStepped = false;
+            UniRunManager.instance.AddScore(1);
         }
     }
 }

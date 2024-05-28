@@ -404,6 +404,7 @@
 "Assets/Scripts/UniRun/UniRunGameManager.cs"
 "Assets/Scripts/UniRun/UniRunManager.cs"
 "Assets/Scripts/UniRun/UniRunPlatform.cs"
+"Assets/Scripts/UniRun/UniRunPlatformSpawner.cs"
 "Assets/Scripts/UniRun/UniRunPlayerController.cs"
 "Assets/Scripts/UniRun/UniRunScrollingObject.cs"
 -langversion:9.0

@@ -43,7 +43,7 @@ public class UniRunManager : MonoBehaviour
         if (!isGameover) 
         {
             score += newScore;
-            scoreText.text = scoreText.text;
+            scoreText.text = "Score : " + score;
         }
     }
 

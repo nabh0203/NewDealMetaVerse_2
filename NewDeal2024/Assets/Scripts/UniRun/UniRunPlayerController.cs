@@ -39,7 +39,7 @@ public class UniRunPlayerController : MonoBehaviour
     void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.Space) && jumpCount < MAX_JUMP_COUNT)
+        if (Input.GetKeyDown(KeyCode.Space) && jumpCount < MAX_JUMP_COUNT && !isDead)
         {
             //점프횟수 추가
             jumpCount++;
@@ -58,6 +58,8 @@ public class UniRunPlayerController : MonoBehaviour
 
         // 애니메이터의 Grounded 파라미터를 isGrounded 값으로 갱신한다. (매프레임)
         animator.SetBool("Grounded", isGrounded);
+
+
     }
     private void Die()
     {
