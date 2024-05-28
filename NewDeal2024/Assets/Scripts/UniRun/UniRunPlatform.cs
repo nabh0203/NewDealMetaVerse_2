@@ -6,8 +6,12 @@ public class UniRunPlatform : MonoBehaviour
 {
     //0부터 100개의 숫자중에 확률값을 설정
     private const int PERCENTAGE_OBSTACLES_CREATE = 30;
+    //추가 보너스 라이프
+    private const int PERCENTAGE_BONUSLIFE_CREATE = 100;
     //장애물 오브젝트 3개를 저장하는 배열
     public GameObject[] obstacles;
+    //보너스 라이프 오브젝트 3개를 저장하는 배열
+    public GameObject[] BonusLife;
     //플레이어가 장애물을 밟았는지 체크
     public bool isStepped = false;
 
@@ -35,7 +39,18 @@ public class UniRunPlatform : MonoBehaviour
             {
                 obstacles[i].SetActive(false);
             }
-        } 
+            
+        }
+        foreach(GameObject Bonus in BonusLife) 
+        { 
+            Bonus.SetActive(false);
+        }
+
+        if (Random.Range(0, 100) < PERCENTAGE_BONUSLIFE_CREATE)
+        {
+            int index = Random.Range(0,BonusLife.Length);    
+            BonusLife[index].SetActive(true);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)

@@ -9,7 +9,13 @@ public class UniRunScrollingObject : MonoBehaviour
 
     void Update()
     {
+        if (UniRunManager.instance.isGameover)
+        {
+            //speed = 0f;
+            return;
+        }
         //1초마다 x좌표로 -1 만큼 움직인다.
         transform.Translate(Vector3.left * speed * Time.deltaTime);
+        
     }
 }

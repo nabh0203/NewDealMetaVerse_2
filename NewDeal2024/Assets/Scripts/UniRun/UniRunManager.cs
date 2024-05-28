@@ -14,7 +14,7 @@ public class UniRunManager : MonoBehaviour
 
     private int score = 0;
 
-
+    public GameObject[] lifeObject;
     private void Awake()
     {
         if (instance == null) 
@@ -51,5 +51,44 @@ public class UniRunManager : MonoBehaviour
     {
         isGameover = true;
         gameoverUI.SetActive(true);
+
+    }
+
+
+    public void RefreshLifeCount (int lifeCount)
+    {
+
+        //for (int i = 0; i < lifeObject.Length; i ++)
+        //{
+        //    if(i < lifeCount)
+        //    {
+        //        Debug.Log("-1");
+        //        lifeObject[i].SetActive(true);
+        //    }
+        //    else
+        //    {
+        //        lifeObject[i].SetActive(false);
+        //    }
+        //}
+
+
+        for (int i = 0; i < lifeObject.Length; i++)
+        {
+            if (i >= lifeCount)
+            {
+                lifeObject[i].SetActive(false);
+            }
+        }
+    }
+
+    public void BonusLifeCount(int lifeCount)
+    {
+        for (int i = 0; i < lifeObject.Length; i++)
+        {
+            if (i <= lifeCount)
+            {
+                lifeObject[i].SetActive(true);
+            }
+        }
     }
 }
