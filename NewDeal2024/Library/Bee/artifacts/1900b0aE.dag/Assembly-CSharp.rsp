@@ -395,6 +395,7 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2022.3.25f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/Layer Lab/Scripts/PanelControl.cs"
 "Assets/Layer Lab/Scripts/PanelView.cs"
+"Assets/Scripts/ContentManager.cs"
 "Assets/Scripts/Dodge/Bullet.cs"
 "Assets/Scripts/Dodge/GameManager.cs"
 "Assets/Scripts/Dodge/PlayerController.cs"
@@ -409,6 +410,7 @@
 "Assets/Scripts/UniRun/UniRunPlatformSpawner.cs"
 "Assets/Scripts/UniRun/UniRunPlayerController.cs"
 "Assets/Scripts/UniRun/UniRunScrollingObject.cs"
+"Assets/Scripts/UniRun/UniRunTitleScroll.cs"
 -langversion:9.0
 /deterministic
 /optimize+

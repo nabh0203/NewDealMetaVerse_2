@@ -7,7 +7,7 @@ public class UniRunPlatform : MonoBehaviour
     //0부터 100개의 숫자중에 확률값을 설정
     private const int PERCENTAGE_OBSTACLES_CREATE = 30;
     //추가 보너스 라이프
-    private const int PERCENTAGE_BONUSLIFE_CREATE = 100;
+    private const int PERCENTAGE_BONUSLIFE_CREATE = 20;
     //장애물 오브젝트 3개를 저장하는 배열
     public GameObject[] obstacles;
     //보너스 라이프 오브젝트 3개를 저장하는 배열
