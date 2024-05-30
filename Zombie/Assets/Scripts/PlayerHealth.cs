@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Services.Analytics;
+using UnityEngine;
 using UnityEngine.UI; // UI 관련 코드
 
 // 플레이어 캐릭터의 생명체로서의 동작을 담당
@@ -17,32 +18,84 @@ public class PlayerHealth : LivingEntity {
 
     private void Awake() {
         // 사용할 컴포넌트를 가져오기
+        playerAnimator = GetComponent<Animator>();
+        playerAudioPlayer = GetComponent<AudioSource>();
+
+        playerMovement = GetComponent<PlayerMovement>();
+        playerShooter = GetComponent<PlayerShooter>();
+
+
     }
 
     protected override void OnEnable() {
         // LivingEntity의 OnEnable() 실행 (상태 초기화)
         base.OnEnable();
+        //체력 바 활성화
+        healthSlider.gameObject.SetActive(true);
+        //체력 바 최댓값 기본으로 변경
+        healthSlider.maxValue = startingHealth;
+        //체력바 현재값으로 변경
+        healthSlider.value = startingHealth;
+
+        //플레이어 조작을 받는 컴포넌트 활성화
+        playerMovement.enabled = true;
+        playerShooter.enabled = true;
     }
 
     // 체력 회복
     public override void RestoreHealth(float newHealth) {
         // LivingEntity의 RestoreHealth() 실행 (체력 증가)
         base.RestoreHealth(newHealth);
+        //현재 체력을 갱신
+        healthSlider.value = health;
     }
 
     // 데미지 처리
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitDirection) {
+        if (!dead) 
+        {
+            //사망하지 않은 경우에만 효과음 재생
+            playerAudioPlayer.PlayOneShot(hitClip);
+        }
+        
         // LivingEntity의 OnDamage() 실행(데미지 적용)
         base.OnDamage(damage, hitPoint, hitDirection);
+        //체력바 갱신
+        healthSlider.value = health;
     }
 
     // 사망 처리
     public override void Die() {
         // LivingEntity의 Die() 실행(사망 적용)
         base.Die();
+
+        //체력바 비활성화
+        healthSlider.gameObject.SetActive(false);
+        //죽음 오디오 재생
+        playerAudioPlayer.PlayOneShot(deathClip);
+        //죽는 애니메이션 재생
+        playerAnimator.SetTrigger("Die");
+
+
+        //플레이어 조작을 받는 컴포넌트 비활성화
+        playerMovement.enabled = false;
+        playerShooter.enabled = false;
     }
 
     private void OnTriggerEnter(Collider other) {
         // 아이템과 충돌한 경우 해당 아이템을 사용하는 처리
+        if (!dead)
+        {
+            //충돌한 상대방으로부터 IItem 컴포넌트를 받는다.
+            IItem item = other.GetComponent<IItem>();
+            //컴포넌트를 가져왔다면
+            if (item != null)
+            {
+                //Use메서드를 실행해서 아이템 사용
+                item.Use(gameObject);
+                //아이템 얻는 효과음 재생
+                playerAudioPlayer.PlayOneShot(itemPickupClip);
+            }
+        }
     }
 }
