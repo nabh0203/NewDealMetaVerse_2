@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-[CreateAssetMenu(menuName = "Scriptadble/GunData" , fileName = "Gun Data")]
+[CreateAssetMenu(menuName = "Scriptable/GunData" , fileName = "Gun Data")]
 
 public class GunData : ScriptableObject
 {
