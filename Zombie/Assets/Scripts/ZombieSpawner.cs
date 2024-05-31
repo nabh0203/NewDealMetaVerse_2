@@ -36,11 +36,38 @@ public class ZombieSpawner : MonoBehaviour {
 
     // 현재 웨이브에 맞춰 좀비들을 생성
     private void SpawnWave() {
+        //웨이브 +1
+        wave++;
 
+        //현재 웨이브 *1.5 을 반올림한 수만큼 좀비 생성
+        int spawnCount = Mathf.RoundToInt(wave * 1.5f);
+
+        //spawnCount만큼 좀비 생성
+        for (int i = 0; i < spawnCount; i++)
+        {
+            CreateZombie();
+        }
     }
 
     // 좀비를 생성하고 생성한 좀비에게 추적할 대상을 할당
     private void CreateZombie() {
+        //사용되는 좀비 데이터랜덤 지정
+        ZombieData zombieData = zombieDatas[Random.Range(0, zombieDatas.Length)];
+        //좀비 생성 위치 랜덤 지정
+        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        //좀비 복제
+        Zombie zombie = Instantiate(zombiePrefab, spawnPoint.position , spawnPoint.rotation);
+        //생성한 좀비의 능력치 설정
+        zombie.Setup(zombieData);
+        //생성된 좀비 추가
+        zombies.Add(zombie);
 
+        //람다식을 사용한 익명 함수
+        //zombie.onDeath 이벤트 안에서 일회용 메서드를 구현한뒤 실행 도중에 미리 정의되지 않은 메서드를 오브젝트 찍어내듯이 사용할수 있다.
+        zombie.onDeath += () => zombies.Remove(zombie);
+        zombie.onDeath += () => Destroy(zombie.gameObject, 10f);
+        zombie.onDeath += () => GameManager.instance.AddScore(100);
+        
+    
     }
 }
