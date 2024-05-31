@@ -44,7 +44,7 @@ public class Zombie : LivingEntity
         zombieAudioPlayer = GetComponent<AudioSource>();
 
         //자식 게임오브젝트에 있는 컴포넌트를 받아온다.
-        zombieRenderer = GetComponent<Renderer>();
+        zombieRenderer = GetComponentInChildren<Renderer>();
     }
 
     // 좀비 AI의 초기 스펙을 결정하는 셋업 메서드
@@ -72,43 +72,47 @@ public class Zombie : LivingEntity
     }
 
     // 주기적으로 추적할 대상의 위치를 찾아 경로 갱신
-    private IEnumerator UpdatePath() {
+    private IEnumerator UpdatePath()
+    {
         // 살아 있는 동안 무한 루프
         while (!dead)
         {
             if (!dead)
             {
-                //추적 대상 존재 : 경로를 갱신하고 AI 이동을 계속 진행
-                navMeshAgent.isStopped = false;
-                navMeshAgent.SetDestination(targetEntity.transform.position);
-            }
-            else
-            {
-                //추적 대상 없음 : AI 이동 중지 
-                navMeshAgent.isStopped = true;
-                //20유닛의 반지름을가진 가상의 구를 그렸을때 구와 겹치는 모든 콜라이더를 가져옴
-                //단, whatIsTarget  레이어를 가진 콜라이더만 가져오도록 필터링
-                Collider[] collider = Physics.OverlapSphere(transform.position, 20f, whatIsTarget);
-
-                //모든 콜라이더를 순회하면서 살아 있는 LivingEntity 찾기  
-                for(int i = 0; i < collider.Length; i++)
+                if (hasTarget)
                 {
-                    //콜라이더로부터 컴포넌트 받아오기
-                    LivingEntity livingEntity = collider[i].GetComponent<LivingEntity>();
+                    //추적 대상 존재 : 경로를 갱신하고 AI 이동을 계속 진행
+                    navMeshAgent.isStopped = false;
+                    navMeshAgent.SetDestination(targetEntity.transform.position);
+                }
+                else
+                {
+                    //추적 대상 없음 : AI 이동 중지 
+                    navMeshAgent.isStopped = true;
+                    //20유닛의 반지름을가진 가상의 구를 그렸을때 구와 겹치는 모든 콜라이더를 가져옴
+                    //단, whatIsTarget  레이어를 가진 콜라이더만 가져오도록 필터링
+                    Collider[] collider = Physics.OverlapSphere(transform.position, 20f, whatIsTarget);
 
-                    //컴포넌트가 존재하고 살아있다면
-                    if (livingEntity != null && !livingEntity.dead)
+                    //모든 콜라이더를 순회하면서 살아 있는 LivingEntity 찾기  
+                    for (int i = 0; i < collider.Length; i++)
                     {
-                        //추적대상을 해당 LivingEntity 로 설정
-                        targetEntity = livingEntity;
+                        //콜라이더로부터 컴포넌트 받아오기
+                        LivingEntity livingEntity = collider[i].GetComponent<LivingEntity>();
 
-                        //for 문 종료
-                        break;
+                        //컴포넌트가 존재하고 살아있다면
+                        if (livingEntity != null && !livingEntity.dead)
+                        {
+                            //추적대상을 해당 LivingEntity 로 설정
+                            targetEntity = livingEntity;
+
+                            //for 문 종료
+                            break;
+                        }
                     }
                 }
+                // 0.25초 주기로 처리 반복
+                yield return new WaitForSeconds(0.25f);
             }
-            // 0.25초 주기로 처리 반복
-            yield return new WaitForSeconds(0.25f);
         }
     }
 
