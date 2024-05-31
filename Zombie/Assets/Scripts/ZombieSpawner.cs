@@ -66,8 +66,12 @@ public class ZombieSpawner : MonoBehaviour {
         //zombie.onDeath 이벤트 안에서 일회용 메서드를 구현한뒤 실행 도중에 미리 정의되지 않은 메서드를 오브젝트 찍어내듯이 사용할수 있다.
         zombie.onDeath += () => zombies.Remove(zombie);
         zombie.onDeath += () => Destroy(zombie.gameObject, 10f);
-        zombie.onDeath += () => GameManager.instance.AddScore(100);
-        
-    
+        //zombie.onDeath += () => GameManager.instance.AddScore(100);
+        zombie.onDeath += Zombie_inDeathAddScore;
+    }
+
+    private void Zombie_inDeathAddScore()
+    {
+        GameManager.instance.AddScore(100);
     }
 }
