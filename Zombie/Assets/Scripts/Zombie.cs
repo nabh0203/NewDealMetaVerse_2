@@ -38,12 +38,27 @@ public class Zombie : LivingEntity
     }
 
     private void Awake() {
-        // 초기화
+        //컴포넌트 가져오기
+        navMeshAgent = GetComponent<NavMeshAgent>(); 
+        zombieAnimator = GetComponent<Animator>();
+        zombieAudioPlayer = GetComponent<AudioSource>();
+
+        //자식 게임오브젝트에 있는 컴포넌트를 받아온다.
+        zombieRenderer = GetComponent<Renderer>();
     }
 
     // 좀비 AI의 초기 스펙을 결정하는 셋업 메서드
     public void Setup(ZombieData zombieData) {
-        
+        //체력설정
+        startingHealth = zombieData.health;
+        health = zombieData.damage;
+
+        //공격력 설정
+        damage = zombieData.damage;
+        //내비메시 에이전트의 이동속도 설정
+        navMeshAgent.speed = zombieData.speed;
+        //렌더러가 사용중인 머티리어르이 컬러를 변경,외형색이 변함
+        zombieRenderer.material.color = zombieData.skinColor;
     }
 
     private void Start() {
@@ -61,6 +76,37 @@ public class Zombie : LivingEntity
         // 살아 있는 동안 무한 루프
         while (!dead)
         {
+            if (!dead)
+            {
+                //추적 대상 존재 : 경로를 갱신하고 AI 이동을 계속 진행
+                navMeshAgent.isStopped = false;
+                navMeshAgent.SetDestination(targetEntity.transform.position);
+            }
+            else
+            {
+                //추적 대상 없음 : AI 이동 중지 
+                navMeshAgent.isStopped = true;
+                //20유닛의 반지름을가진 가상의 구를 그렸을때 구와 겹치는 모든 콜라이더를 가져옴
+                //단, whatIsTarget  레이어를 가진 콜라이더만 가져오도록 필터링
+                Collider[] collider = Physics.OverlapSphere(transform.position, 20f, whatIsTarget);
+
+                //모든 콜라이더를 순회하면서 살아 있는 LivingEntity 찾기  
+                for(int i = 0; i < collider.Length; i++)
+                {
+                    //콜라이더로부터 컴포넌트 받아오기
+                    LivingEntity livingEntity = collider[i].GetComponent<LivingEntity>();
+
+                    //컴포넌트가 존재하고 살아있다면
+                    if (livingEntity != null && !livingEntity.dead)
+                    {
+                        //추적대상을 해당 LivingEntity 로 설정
+                        targetEntity = livingEntity;
+
+                        //for 문 종료
+                        break;
+                    }
+                }
+            }
             // 0.25초 주기로 처리 반복
             yield return new WaitForSeconds(0.25f);
         }
@@ -69,16 +115,64 @@ public class Zombie : LivingEntity
     // 데미지를 입었을 때 실행할 처리
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal) {
         // LivingEntity의 OnDamage()를 실행하여 데미지 적용
+        if(!dead)
+        {
+            //hitEffect 의 위치와 회전값은 공격받은지점으로 부터 생성
+            hitEffect.transform.position = hitPoint;
+            hitEffect.transform.rotation = Quaternion.LookRotation(hitNormal);
+            hitEffect.Play();
+
+            //피격 효과음 재상
+            zombieAudioPlayer.PlayOneShot(hitSound);
+        }
+
+        //LivingEntity 의 OnDamage 를 실행 데미지 적용
         base.OnDamage(damage, hitPoint, hitNormal);
+        
     }
 
     // 사망 처리
     public override void Die() {
         // LivingEntity의 Die()를 실행하여 기본 사망 처리 실행
         base.Die();
+
+        //자신에게 컴포넌트 된 콜라이더를 찾아 비활성화
+        Collider[] zombieColliders = GetComponents<Collider>();
+        for (int i = 0;  i <zombieColliders.Length; i ++)
+        {
+            zombieColliders[i].enabled = false;
+        }
+
+        //AI 추적을 끔
+        navMeshAgent.isStopped = true;
+        navMeshAgent.enabled = false;
+
+        //애니메이션 및 효과음 재생
+        zombieAnimator.SetTrigger("Die");
+        zombieAudioPlayer.PlayOneShot(deathSound);
     }
 
     private void OnTriggerStay(Collider other) {
         // 트리거 충돌한 상대방 게임 오브젝트가 추적 대상이라면 공격 실행
+        //최근 공격시점에서 timeBetAttack 이상 시간이 지났다면 공격가능  
+        if (!dead && Time.time >= lastAttackTime + timeBetAttack)
+        {
+            //상대방의 LivingEntity 컴포넌트를 가져온다.
+            LivingEntity attackTarget = other.GetComponent<LivingEntity>();
+
+            //상대방의 LivingEntity가 자신의 추적 대상이라면 공격 실행
+            if (attackTarget !=null && attackTarget == targetEntity)
+            {
+                //최근 공격 시간 갱신
+                lastAttackTime = Time.time;
+
+                //상대방의 피격 위치 및 방향을 근사값으로 계산
+                Vector3 hitPoint = other.ClosestPoint(transform.position);
+                Vector3 hitNomal = transform.position - other.transform.position;
+
+                // 공격실행
+                attackTarget.OnDamage(damage, hitPoint, hitNomal);
+            }
+        }
     }
 }
