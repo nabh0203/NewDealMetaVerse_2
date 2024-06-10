@@ -1025,7 +1025,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1572347174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1324,6 +1324,11 @@ PrefabInstance:
       propertyPath: moveSpeed
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 9207728077129782314, guid: 0329c3cc1af89564e90f67f68b2bab5c,
+        type: 3}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 1056205787}
     - target: {fileID: 9207728077129782314, guid: 0329c3cc1af89564e90f67f68b2bab5c,
         type: 3}
       propertyPath: rotateSpeed
