@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using Photon.Pun;
 
 // 점수와 게임 오버 여부를 관리하는 게임 매니저
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviourPunCallbacks, IPunObservable 
+{
     // 싱글톤 접근용 프로퍼티
     public static GameManager instance
     {
@@ -21,8 +23,31 @@ public class GameManager : MonoBehaviour {
 
     private static GameManager m_instance; // 싱글톤이 할당될 static 변수
 
+    //접속시 생성되는 플레이어 캐릭터
+    public GameObject playerPrefeb;
+
     private int score = 0; // 현재 게임 점수
     public bool isGameover { get; private set; } // 게임 오버 상태
+    // 주기적으로 자동 실행되는 동기화 메서드
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        /*//로컬 오브젝트라면 쓰기 부분이 실행됨
+        if(stream.IsWriting)
+        {
+
+            //네트워크를 통해 Score 값 내보내기
+            stream.SendNext(score);
+        }
+        else
+        {
+            //리모트 오브젝트라면 읽기 부분이 실행
+
+            //네트워크를 통해 Score 값 받기
+            score = (int)stream.ReceiveNext();
+            //동기화하여 받은 점수를 UI로 표시
+            UIManager.instance.UpdateScoreText(score);
+        }*/
+    }
 
     private void Awake() {
         // 씬에 싱글톤 오브젝트가 된 다른 GameManager 오브젝트가 있다면
@@ -35,7 +60,16 @@ public class GameManager : MonoBehaviour {
 
     private void Start() {
         // 플레이어 캐릭터의 사망 이벤트 발생시 게임 오버
-        FindObjectOfType<PlayerHealth>().onDeath += EndGame;
+        //FindObjectOfType<PlayerHealth>().onDeath += EndGame;
+        // 생성할 랜덤 위치 생성
+        Vector3 randomSpawnPos = Random.insideUnitSphere * 5f;
+
+        // y 값 0 으로 고정
+        randomSpawnPos.y = 0f;
+
+        //네트워크상의 모든 클라이언트에서 생성 실행
+        //해당 게임 오브젝트의 주도권은 생성 메서드를 직접 실행한 클라이언트에 있음
+        PhotonNetwork.Instantiate(playerPrefeb.name, randomSpawnPos, Quaternion.identity);
     }
 
     // 점수를 추가하고 UI 갱신
