@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.AI; // AI, 내비게이션 시스템 관련 코드 가져오기
 
@@ -48,26 +49,38 @@ public class Zombie : LivingEntity
         // 자식객체에서 컴포넌트를 가져올 때는 GetComponentChildren() 메서드를 사용
         zombieRenderer = GetComponentInChildren<Renderer>();
     }
-
+    [PunRPC]
     // 좀비 AI의 초기 스펙을 결정하는 셋업 메서드
-    public void Setup(ZombieData zombieData)
+    //public void Setup(ZombieData zombieData)
+    public void Setup(float newHealth, float newDamage,float newSpeed,Color skinColor)
     {
         // 좀비의 체력 설정
-        startingHealth = zombieData.health;
-        health = zombieData.health;
+        startingHealth = newHealth;
+        health = newHealth;
 
         // 공격력 설정
-        damage = zombieData.damage;
-        navMeshAgent.speed = zombieData.speed;  // 내비메시 에이전트의 이동속도
-        zombieRenderer.material.color = zombieData.skinColor;   // 렌더러가 사용중인 머테리얼 컬러를 변경, 외형 색이 변함
+        damage = newDamage;
+        navMeshAgent.speed = newSpeed;  // 내비메시 에이전트의 이동속도
+        zombieRenderer.material.color = skinColor;   // 렌더러가 사용중인 머테리얼 컬러를 변경, 외형 색이 변함
     }
 
     private void Start() {
+        //호스트가 아니라면 AI 추적 루틴을 실행하지 않음
+        if(!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
+
         // 게임 오브젝트 활성화와 동시에 AI의 추적 루틴 시작
         StartCoroutine(UpdatePath());
     }
 
     private void Update() {
+        //호스트가 아니라면 AI 추적 루틴을 실행하지 않음
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
         // 추적 대상의 존재 여부에 따라 다른 애니메이션 재생
         zombieAnimator.SetBool("HasTarget", hasTarget);
     }
@@ -112,6 +125,7 @@ public class Zombie : LivingEntity
         }
     }
 
+    [PunRPC]
     // 데미지를 입었을 때 실행할 처리
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
     {
@@ -151,6 +165,11 @@ public class Zombie : LivingEntity
 
     private void OnTriggerStay(Collider other)
     {
+        //호스트가 아니라면 AI 추적 루틴을 실행하지 않음
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
         // OnTriggerStay는 콜라이더 충돌이 발생하는동안 계속 진입
         // 트리거 충돌한 상대방 게임 오브젝트가 추적 대상이라면 공격 실행
         if (!dead && Time.time >= lastAttackTime + timeBetAttack)
