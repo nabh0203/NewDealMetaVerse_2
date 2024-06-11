@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 // 점수와 게임 오버 여부를 관리하는 게임 매니저
 public class GameManager : MonoBehaviourPunCallbacks, IPunObservable 
@@ -31,8 +32,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     // 주기적으로 자동 실행되는 동기화 메서드
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        /*//로컬 오브젝트라면 쓰기 부분이 실행됨
-        if(stream.IsWriting)
+        //로컬 오브젝트라면 쓰기 부분이 실행됨
+        if (stream.IsWriting)
         {
 
             //네트워크를 통해 Score 값 내보내기
@@ -46,7 +47,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
             score = (int)stream.ReceiveNext();
             //동기화하여 받은 점수를 UI로 표시
             UIManager.instance.UpdateScoreText(score);
-        }*/
+        }
     }
 
     private void Awake() {
@@ -90,5 +91,19 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         isGameover = true;
         // 게임 오버 UI를 활성화
         UIManager.instance.SetActiveGameoverUI(true);
+    }
+    //키를 눌러 룸을 나감
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+    }
+    //룸을 나갈때 자동 실행되는 메서드
+    public override void OnLeftRoom()
+    {
+        //룸을 나가면 로비씬으로 돌아감
+        SceneManager.LoadScene("ZombieLobby");
     }
 }
