@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Photon.Pun;
+using System.Collections.Generic;
 using UnityEngine;
 
 // 좀비 게임 오브젝트를 주기적으로 생성
@@ -53,9 +54,14 @@ public class ZombieSpawner : MonoBehaviour {
 
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];    // 스폰포인트 4개중에서 하나를 랜덤으로 결정해서 스폰위치러 결정
 
-        Zombie zombie = Instantiate(zombiePrefab, spawnPoint.position, spawnPoint.rotation);    // 좀비프리팹으로 해당위치에 좀비 생성
+        //Zombie zombie = Instantiate(zombiePrefab, spawnPoint.position, spawnPoint.rotation);    // 좀비프리팹으로 해당위치에 좀비 생성
+        //좀비 프리펩으로부터 좀비 생성, 네트워크 상의 모든 클라이언트들이 생성
+        GameObject createdZombie = PhotonNetwork.Instantiate(zombiePrefab.name, spawnPoint.position, spawnPoint.rotation);
+        Zombie zombie = createdZombie.GetComponent<Zombie>();
+        zombie.photonView.RPC("SetUp", RpcTarget.All, zombieData.health, zombieData.damage,zombieData.speed, zombieData.skinColor);
 
-        zombie.Setup(zombieData);       // 생성한 좀비의 초기값 능력치 설정
+        //zombie.Setup(zombieData);       // 생성한 좀비의 초기값 능력치 설정
+        
 
         zombies.Add(zombie);            // 리스트에 새로 생성한 좀비 추가
 
